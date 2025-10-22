@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Bank — Contact</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="navbar fade-up">
+      <a class="brand" href="index.html"><div class="logo">SB</div><div><strong>Smart Bank</strong></div></a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html" class="btn">Login</a>
+      </nav>
+    </header>
+
+    <section style="margin-top:22px">
+      <div class="card">
+        <h2>Contact Us</h2>
+        <p class="muted">Questions? We're here to help — fill the form below.</p>
+
+        <form id="contactForm" style="margin-top:12px">
+          <div style="display:flex; gap:12px; flex-wrap:wrap">
+            <input class="input" name="name" placeholder="Your name" required />
+            <input class="input" name="email" placeholder="Email address" required />
+          </div>
+          <div style="margin-top:12px">
+            <input class="input" name="subject" placeholder="Subject" required />
+          </div>
+          <div style="margin-top:12px">
+            <textarea class="input" name="message" placeholder="Your message" rows="6" required></textarea>
+          </div>
+          <div style="margin-top:12px">
+            <button class="btn btn-primary">Send message</button>
+          </div>
+        </form>
+        <div id="contactMsg" style="margin-top:12px"></div>
+      </div>
+    </section>
+
+    <footer style="margin-top:18px">© 2025 Smart Bank — Demo site.</footer>
+  </div>
+  <script src="assets/scripts.js"></script>
+</body>
+</html>

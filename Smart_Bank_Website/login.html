@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Bank — Login</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div class="container" style="max-width:420px">
+    <header style="display:flex; justify-content:center; margin-bottom:18px" class="fade-up">
+      <a class="brand" href="index.html"><div class="logo">SB</div></a>
+    </header>
+
+    <section class="card fade-up">
+      <h2>Sign in to your account</h2>
+      <p class="muted">Demo login — no real authentication. This redirects to Home (demo).</p>
+
+      <form id="loginForm" style="margin-top:12px">
+        <input class="input" id="username" placeholder="Username or email" required />
+        <input class="input" id="password" type="password" placeholder="Password" required />
+        <div style="display:flex; gap:8px; align-items:center; margin-top:8px">
+          <input id="remember" type="checkbox" /><label for="remember" class="muted">Remember me</label>
+        </div>
+        <div style="margin-top:12px">
+          <button class="btn btn-primary">Sign in</button>
+        </div>
+      </form>
+      <div id="loginMsg" style="margin-top:12px"></div>
+    </section>
+
+    <footer style="margin-top:18px">© 2025 Smart Bank — Demo site.</footer>
+  </div>
+  <script src="assets/scripts.js"></script>
+</body>
+</html>
