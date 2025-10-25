@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MoviePlex — Professional Movie Streaming UI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0b0f;
+      --card:#0f1720;
+      --muted:#9aa3b2;
+      --accent:#e50914; /* Netflix-like red */
+      --glass: rgba(255,255,255,0.04);
+      --radius:14px;
+      --max-width:1200px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Arial,Helvetica,sans-serif;
+      background:linear-gradient(180deg,#071018 0%, #041018 60%);
+      color:#e6eef6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding-bottom:100px;
+    }
+    .container{max-width:var(--max-width);margin:0 auto;padding:28px}
+
+    /* Header */
+    header{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{width:44px;height:44px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:white}
+    .nav{display:flex;gap:18px;align-items:center}
+    .nav a{color:var(--muted);text-decoration:none;font-weight:500}
+    .search{position:relative}
+    .search input{background:var(--glass);border:1px solid rgba(255,255,255,0.06);padding:10px 36px;border-radius:10px;color:#dfe9f6;outline:none;width:220px}
+    .search button{position:absolute;right:4px;top:4px;border:none;background:transparent;color:var(--muted);padding:8px;cursor:pointer}
+    .profile{display:flex;gap:12px;align-items:center}
+    .profile img{width:36px;height:36px;border-radius:50%;object-fit:cover}
+
+    /* Hero */
+    .hero{display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:center;margin:28px 0}
+    .hero-card{background:linear-gradient(90deg, rgba(255,255,255,0.03), transparent);padding:28px;border-radius:18px}
+    .hero h1{font-size:36px;margin:0 0 10px}
+    .hero p{color:var(--muted);line-height:1.5}
+    .hero-actions{margin-top:16px;display:flex;gap:12px}
+    .btn{padding:12px 18px;border-radius:10px;border:none;font-weight:600;cursor:pointer}
+    .btn-play{background:var(--accent);color:white}
+    .btn-info{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#dbe9ff}
+
+    /* Carousel */
+    .row{margin-top:18px}
+    .row h3{margin:6px 0 12px}
+    .cards{display:flex;gap:12px;overflow:hidden}
+    .card{min-width:200px;background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,0.6);cursor:pointer;transition:transform .25s ease,box-shadow .25s}
+    .card img{display:block;width:100%;height:300px;object-fit:cover}
+    .card .meta{padding:10px}
+    .card h4{margin:0 0 6px;font-size:16px}
+    .card p{margin:0;color:var(--muted);font-size:13px}
+    .card:hover{transform:translateY(-8px);box-shadow:0 18px 40px rgba(0,0,0,0.7)}
+
+    /* Controls */
+    .controls{display:flex;gap:10px;align-items:center;margin-top:10px}
+    .chev{background:rgba(255,255,255,0.04);border:none;padding:8px;border-radius:8px;cursor:pointer}
+
+    /* Modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:60;opacity:0;pointer-events:none;transition:opacity .18s}
+    .modal.open{opacity:1;pointer-events:auto}
+    .modal-content{width:min(1000px,95%);background:#071018;border-radius:14px;overflow:hidden}
+    .modal .player{width:100%;height:560px;background:black}
+    .modal .close{position:absolute;right:22px;top:18px;background:transparent;border:none;color:white;font-size:18px;cursor:pointer}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .hero .hero-card{order:2}
+      .hero .hero-image{order:1}
+      .card img{height:220px}
+    }
+    @media (max-width:520px){
+      .search input{width:140px}
+      .card{min-width:140px}
+      .card img{height:160px}
+      .modal .player{height:300px}
+    }
+
+    /* Small helper */
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header class="container">
+    <div class="brand">
+      <div class="logo">MP</div>
+      <div>
+        <div style="font-weight:800">MoviePlex</div>
+        <div style="font-size:12px;color:var(--muted)">Stream the best.</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a href="#">Home</a>
+      <a href="#new">New</a>
+      <a href="#trending">Trending</a>
+      <a href="#mylist">My List</a>
+    </nav>
+
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="search">
+        <input id="search" placeholder="Search movies, actors..." aria-label="search movies" />
+        <button aria-hidden>🔍</button>
+      </div>
+      <div class="profile">
+        <button class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 12px;border-radius:10px">Kids</button>
+        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop&crop=faces" alt="profile"/>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-card">
+        <h1>Featured — The Lost Horizon</h1>
+        <p class="muted">An epic journey of discovery. A cinematic experience with breathtaking visuals and an emotional core that will stay with you.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-play" id="heroPlay">▶ Play</button>
+          <button class="btn btn-info" id="heroMore">More Info</button>
+        </div>
+      </div>
+      <div class="hero-image" style="border-radius:18px;overflow:hidden;">
+        <img src="https://images.unsplash.com/photo-1502136969935-8e05b3d4b3d0?q=80&w=1200&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;border-radius:12px;" alt="hero"/>
+      </div>
+    </section>
+
+    <section class="row" id="trending">
+      <h3>Trending Now</h3>
+      <div class="controls">
+        <button class="chev" id="left1">◀</button>
+        <div class="cards" id="row1" tabindex="0" aria-label="trending movies"></div>
+        <button class="chev" id="right1">▶</button>
+      </div>
+    </section>
+
+    <section class="row" id="new">
+      <h3>New Releases</h3>
+      <div class="controls">
+        <button class="chev" id="left2">◀</button>
+        <div class="cards" id="row2" tabindex="0" aria-label="new releases"></div>
+        <button class="chev" id="right2">▶</button>
+      </div>
+    </section>
+
+    <section class="row" id="recommended">
+      <h3>Recommended for you</h3>
+      <div class="controls">
+        <button class="chev" id="left3">◀</button>
+        <div class="cards" id="row3" tabindex="0" aria-label="recommended"></div>
+        <button class="chev" id="right3">▶</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-content">
+      <button class="close" id="closeModal" aria-label="close">✕</button>
+      <div class="player" id="player">
+        <!-- Video iframe will be injected here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sample data - replace poster and trailer URLs with your own content
+    const movies = [
+      {id:1,title:'The Lost Horizon',year:2024,tag:'Adventure',poster:'https://picsum.photos/seed/1/600/900',trailer:'https://www.youtube.com/embed/ysz5S6PUM-U'},
+      {id:2,title:'City of Glass',year:2023,tag:'Drama',poster:'https://picsum.photos/seed/2/600/900',trailer:'https://www.youtube.com/embed/ysz5S6PUM-U'},
+      {id:3,title:'Neon Nights',year:2025,tag:'Sci-fi',poster:'https://picsum.photos/seed/3/600/900',trailer:'https://www.youtube.com/embed/ysz5S6PUM-U'},
+      {id:4,title:'Silent Harbor',year:2022,tag:'Thriller',poster:'https://picsum.photos/seed/4/600/900',trailer:'https://www.youtube.com/embed/ysz5S6PUM-U'},
+      {id:5,title:'The Long Road',year:2021,tag:'Drama',poster:'https://picsum.photos/seed/5/600/900',trailer:'https://www.youtube.com/embed/ysz5S6PUM-U'},
+      {id:6,title:'Skyward',year:2024,tag:'Anime',poster:'https://picsum.photos/seed/6/600/900',trailer:'https://www.youtube.com/embed/ysz5S6PUM-U'},
+      {id:7,title:'Midnight Run',year:2023,tag:'Action',poster:'https://picsum.photos/seed/7/600/900',trailer:'https://www.youtube.com/embed/ysz5S6PUM-U'},
+      {id:8,title:'Quiet Places',year:2020,tag:'Horror',poster:'https://picsum.photos/seed/8/600/900',trailer:'https://www.youtube.com/embed/ysz5S6PUM-U'}
+    ];
+
+    // Utility: create card
+    function makeCard(movie){
+      const card = document.createElement('div');
+      card.className='card';
+      card.tabIndex=0;
+      card.innerHTML = `
+        <img src="${movie.poster}" alt="${movie.title} poster">
+        <div class="meta">
+          <h4>${movie.title} <span style="font-weight:600;color:var(--muted);font-size:12px">(${movie.year})</span></h4>
+          <p class="muted">${movie.tag}</p>
+        </div>
+      `;
+      // click opens modal
+      card.addEventListener('click', ()=>openModal(movie));
+      card.addEventListener('keypress', (e)=>{ if(e.key==='Enter') openModal(movie); });
+      return card;
+    }
+
+    // Fill rows
+    const row1 = document.getElementById('row1');
+    const row2 = document.getElementById('row2');
+    const row3 = document.getElementById('row3');
+
+    // assign movies to rows (simple distribution)
+    row1.append(...movies.slice(0,5).map(makeCard));
+    row2.append(...movies.slice(2,7).map(makeCard));
+    row3.append(...movies.slice(4).map(makeCard));
+
+    // Simple horizontal scroll controls
+    function connectControls(leftId,rightId,row){
+      document.getElementById(leftId).addEventListener('click', ()=>{ row.scrollBy({left:-520,behavior:'smooth'}) });
+      document.getElementById(rightId).addEventListener('click', ()=>{ row.scrollBy({left:520,behavior:'smooth'}) });
+    }
+    connectControls('left1','right1',row1);
+    connectControls('left2','right2',row2);
+    connectControls('left3','right3',row3);
+
+    // Modal logic
+    const modal = document.getElementById('modal');
+    const player = document.getElementById('player');
+    const closeBtn = document.getElementById('closeModal');
+
+    function openModal(movie){
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      // Inject iframe - ensure trailer URL is embeddable. Replace with your CDN/player if needed.
+      player.innerHTML = `<iframe width="100%" height="100%" src="${movie.trailer}?autoplay=1&rel=0" title="${movie.title} trailer" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+      document.body.style.overflow='hidden';
+    }
+    function closeModal(){
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+      player.innerHTML='';
+      document.body.style.overflow='';
+    }
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+
+    // Hero play button uses first movie
+    document.getElementById('heroPlay').addEventListener('click', ()=>openModal(movies[0]));
+
+    // Search filtering (client-side)
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('input', ()=>{
+      const q = searchInput.value.trim().toLowerCase();
+      const allCards = document.querySelectorAll('.card');
+      allCards.forEach(card=>{
+        const title = card.querySelector('h4').innerText.toLowerCase();
+        card.style.display = title.includes(q) ? '' : 'none';
+      });
+    });
+
+    // Accessibility improvements: keyboard horizontal scroll with arrow keys on rows
+    [row1,row2,row3].forEach(row=>{
+      row.addEventListener('keydown', (e)=>{
+        if(e.key==='ArrowRight') row.scrollBy({left:240,behavior:'smooth'});
+        if(e.key==='ArrowLeft') row.scrollBy({left:-240,behavior:'smooth'});
+      });
+    });
+
+    // Progressive enhancement: lazy load images
+    document.querySelectorAll('img').forEach(img=>{ img.loading='lazy'; });
+
+    // NOTE: To make this production-ready like Netflix consider:
+    // - Replacing picsum images with your CDN or hashed assets
+    // - Adding authentication, user profiles, watch-history, and encrypted DRM streaming
+    // - Implementing server-side rendering for SEO and faster first paint
+    // - Adding analytics, A/B tests, and accessibility audits
+
+  </script>
+</body>
+</html>
